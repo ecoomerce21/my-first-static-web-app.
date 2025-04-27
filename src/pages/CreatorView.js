@@ -1,5 +1,5 @@
 import React from 'react';
-
+import './CreatorView.css';
 const CreatorView = () => {
   return (
     <div style={{ padding: '2rem' }}>

@@ -1,0 +1,46 @@
+/* Wrapper for the page */
+div {
+    padding: 2rem;
+    background-color: #f4f4f9;
+    border-radius: 8px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  /* Heading Style */
+  h1 {
+    text-align: center;
+    color: #333;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  /* Form elements */
+  form input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+  }
+  
+  form input[type="file"] {
+    border: none;
+  }
+  
+  form button {
+    width: 100%;
+    padding: 12px;
+    background-color: #5d0ddd;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    cursor: pointer;
+  }
+  
+  form button:hover {
+    background-color: #4c74f7;
+  }
+  

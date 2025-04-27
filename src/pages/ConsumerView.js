@@ -1,5 +1,5 @@
 import React from 'react';
-
+import './ConsumerView.css';
 const ConsumerView = () => {
   return (
     <div style={{ padding: '2rem' }}>

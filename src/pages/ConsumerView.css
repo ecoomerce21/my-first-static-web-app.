@@ -1,0 +1,24 @@
+/* Wrapper for the page */
+div {
+    padding: 2rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  /* Heading Style */
+  h1 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 1rem;
+  }
+  
+  /* Message style for no videos */
+  div p {
+    font-size: 1.2rem;
+    color: #777;
+    margin-top: 2rem;
+  }
+  
