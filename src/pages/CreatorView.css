@@ -1,46 +1,30 @@
-/* Wrapper for the page */
-div {
-    padding: 2rem;
-    background-color: #f4f4f9;
-    border-radius: 8px;
-    max-width: 600px;
-    margin: 0 auto;
-  }
-  
-  /* Heading Style */
-  h1 {
-    text-align: center;
-    color: #333;
-    font-size: 2rem;
-    margin-bottom: 2rem;
-  }
-  
-  /* Form elements */
-  form input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 1rem;
-  }
-  
-  form input[type="file"] {
-    border: none;
-  }
-  
-  form button {
-    width: 100%;
-    padding: 12px;
-    background-color: #5d0ddd;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 1.1rem;
-    cursor: pointer;
-  }
-  
-  form button:hover {
-    background-color: #4c74f7;
-  }
-  
+.creator-container {
+  padding: 2rem;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  max-width: 600px;
+  margin: auto;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.creator-form input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.creator-form button {
+  padding: 12px 24px;
+  border: none;
+  background-color: #4CAF50;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.creator-form button:hover {
+  background-color: #45a049;
+}
