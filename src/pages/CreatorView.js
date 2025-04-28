@@ -6,17 +6,43 @@ const CreatorView = () => {
   const [caption, setCaption] = useState('');
   const [location, setLocation] = useState('');
   const [peoplePresent, setPeoplePresent] = useState('');
-  const [selectedFile, setSelectedFile] = useState(null);
+ const [selectedFile, setSelectedFile] = useState(null);
 
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]);
+    
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Uploading:', { videoTitle, caption, location, peoplePresent, selectedFile });
-    // Later here: Send data to Azure Function or API
+  
+    if (!selectedFile) {
+      alert('Please select a video file before uploading.');
+      return;
+    }
+  
+    const formData = new FormData();
+    formData.append('video', selectedFile);
+    formData.append('videoTitle', videoTitle);
+    formData.append('caption', caption);
+    formData.append('location', location);
+    formData.append('peoplePresent', peoplePresent);
+  
+    try {
+      const response = await fetch('/api/uploadVideo', {
+        method: 'POST',
+        body: formData
+      });
+  
+      const data = await response.json();
+      console.log('Server Response:', data);
+      alert(data.message || 'Upload successful!');
+    } catch (error) {
+      console.error('Error uploading:', error);
+      alert('Upload failed.');
+    }
   };
+  
 
   return (
     <div className="creator-container">
