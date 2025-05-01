@@ -1,7 +1,7 @@
 // src/pages/ConsumerView.js
 import React, { useEffect, useState } from 'react';
 import './ConsumerView.css';
-const blobUrl = 'https://myfirststaticwebapp1.blob.core.windows.net/videos?sp=rl&st=2025-04-30T10:49:03Z&se=2025-06-05T18:49:03Z&spr=https&sv=2024-11-04&sr=c&sig=3G%2BRSlXkkmp1u1fXgV9QNyjiZqFLmqpEJ%2FXz%2BUtE5ZM%3D';
+const blobUrl = 'https://myfirststaticwebapp1.blob.core.windows.net/videos/mov_bbb.mp4?sp=r&st=2025-04-30T10:58:03Z&se=2025-06-05T18:58:03Z&spr=https&sv=2024-11-04&sr=b&sig=l71MGpUT3X%2BSSr0RnJmc81B%2Fmk1mqEDSh9pRLq7zNcM%3D';
 
 
 const ConsumerView = () => {
