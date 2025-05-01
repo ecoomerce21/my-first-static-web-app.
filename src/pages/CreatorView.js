@@ -13,35 +13,41 @@ const CreatorView = () => {
     
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
   
-    if (!selectedFile) {
-      alert('Please select a video file before uploading.');
-      return;
+  if (!selectedFile) {
+    alert("Please select a file.");
+    return;
+  }
+
+  const blobUrl = "https://myfirststaticwebapp1.blob.core.windows.net/?sv=2024-11-04&ss=bfqt&srt=o&sp=rwdlacupiytfx&se=2025-06-01T12:57:58Z&st=2025-05-01T04:57:58Z&spr=https&sig=qw8BoEGmqfrKS%2B8TJBXYpss5YtyHUgks6%2B2UXq5tqcY%3D";
+  const sasToken = "sv=2024-11-04&ss=bfqt&srt=o&sp=rwdlacupiytfx&se=2025-06-01T12:57:58Z&st=2025-05-01T04:57:58Z&spr=https&sig=qw8BoEGmqfrKS%2B8TJBXYpss5YtyHUgks6%2B2UXq5tqcY%3D";
+  const fileName = encodeURIComponent(selectedFile.name);
+
+  try {
+    const uploadUrl = `${blobUrl}${fileName}?${sasToken}`;
+    const response = await fetch(uploadUrl, {
+      method: "PUT",
+      headers: {
+        "x-ms-blob-type": "BlockBlob",
+        "Content-Type": selectedFile.type
+      },
+      body: selectedFile
+    });
+
+    if (response.ok) {
+      alert("Upload successful!");
+    } else {
+      console.error("Upload failed", await response.text());
+      alert("Upload failed");
     }
-  
-    const formData = new FormData();
-    formData.append('video', selectedFile);
-    formData.append('videoTitle', videoTitle);
-    formData.append('caption', caption);
-    formData.append('location', location);
-    formData.append('peoplePresent', peoplePresent);
-  
-    try {
-      const response = await fetch('/api/uploadVideo', {
-        method: 'POST',
-        body: formData
-      });
-  
-      const data = await response.json();
-      console.log('Server Response:', data);
-      alert(data.message || 'Upload successful!');
-    } catch (error) {
-      console.error('Error uploading:', error);
-      alert('Upload failed.');
-    }
-  };
+  } catch (err) {
+    console.error("Upload error:", err);
+    alert("Upload failed.");
+  }
+};
+
   
 
   return (
