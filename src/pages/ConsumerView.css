@@ -1,38 +1,44 @@
-/* Wrapper for the page */
-div {
-    padding: 2rem;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    max-width: 600px;
-    margin: 0 auto;
-    text-align: center;
-  }
-  
-  /* Heading Style */
-  h1 {
-    font-size: 2rem;
-    color: #333;
-    margin-bottom: 1rem;
-  }
-  
-  /* Message style for no videos */
-  div p {
-    font-size: 1.2rem;
-    color: #777;
-    margin-top: 2rem;
-  }
-  /* src/pages/ConsumerView.css */
 .consumer-container {
   padding: 20px;
-  text-align: center;
+  font-family: Arial, sans-serif;
 }
+
+.search-box {
+  padding: 10px;
+  margin-bottom: 20px;
+  width: 300px;
+  font-size: 16px;
+}
+
 .video-gallery {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
   gap: 20px;
 }
-video {
+
+.video-card {
   border: 1px solid #ccc;
-  border-radius: 10px;
+  padding: 10px;
+  border-radius: 12px;
+  background: #f9f9f9;
+  max-width: 340px;
+}
+
+.comment-section {
+  margin-top: 10px;
+}
+
+.comment-section input {
+  width: 220px;
+  padding: 6px;
+  margin-right: 8px;
+}
+
+.comment-section button {
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.rating {
+  margin-top: 10px;
 }
