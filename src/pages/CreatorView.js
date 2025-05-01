@@ -21,8 +21,8 @@ const CreatorView = () => {
     return;
   }
 
-  const blobUrl = "https://myfirststaticwebapp1.blob.core.windows.net/?sv=2024-11-04&ss=bfqt&srt=o&sp=rwdlacupiytfx&se=2025-06-01T12:57:58Z&st=2025-05-01T04:57:58Z&spr=https&sig=qw8BoEGmqfrKS%2B8TJBXYpss5YtyHUgks6%2B2UXq5tqcY%3D";
-  const sasToken = "sv=2024-11-04&ss=bfqt&srt=o&sp=rwdlacupiytfx&se=2025-06-01T12:57:58Z&st=2025-05-01T04:57:58Z&spr=https&sig=qw8BoEGmqfrKS%2B8TJBXYpss5YtyHUgks6%2B2UXq5tqcY%3D";
+  const blobUrl = "https://myfirststaticwebapp1.blob.core.windows.net/videos?sp=r&st=2025-05-01T08:23:11Z&se=2025-05-01T16:23:11Z&spr=https&sv=2024-11-04&sr=c&sig=YYvIZoQpgvjkwo5bnIbl1VMduqG8YdQz9XIqxMMs%2FpE%3D";
+  const sasToken = "sp=r&st=2025-05-01T08:23:11Z&se=2025-05-01T16:23:11Z&spr=https&sv=2024-11-04&sr=c&sig=YYvIZoQpgvjkwo5bnIbl1VMduqG8YdQz9XIqxMMs%2FpE%3D";
   const fileName = encodeURIComponent(selectedFile.name);
 
   try {
