@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import './ConsumerView.css';
 
-const blobUrl = 'https://myfirststaticwebapp1.blob.core.windows.net/?sv=2024-11-04&ss=bfqt&srt=o&sp=rwdlacupiytfx&se=2025-06-01T08:50:26Z&st=2025-05-01T08:50:26Z&spr=https&sig=Q7XJ7xLhq%2BCZJKaEFGtPPhRbQIal32NQX07w8Okjn2w%3Dhttps://myfirststaticwebapp1.blob.core.windows.net/?sv=2024-11-04&ss=bfqt&srt=o&sp=rwdlacupiytfx&se=2025-06-01T08:50:26Z&st=2025-05-01T08:50:26Z&spr=https&sig=Q7XJ7xLhq%2BCZJKaEFGtPPhRbQIal32NQX07w8Okjn2w%3D';
+const blobUrl = 'https://myfirststaticwebapp1.blob.core.windows.net/videos?sv=2024-11-04&ss=bfqt&srt=o&sp=rwdlacupiytfx&se=2025-06-01T08:50:26Z&st=2025-05-01T08:50:26Z&spr=https&sig=Q7XJ7xLhq%2BCZJKaEFGtPPhRbQIal32NQX07w8Okjn2w%3D';
 
 const ConsumerView = () => {
   const [videoUrls, setVideoUrls] = useState([]);
@@ -21,6 +21,8 @@ const ConsumerView = () => {
         });
 
         setVideoUrls(urls);
+        console.log('Fetched video URLs:', urls);
+
       })
       .catch((error) => {
         console.error('Failed to load videos:', error);
