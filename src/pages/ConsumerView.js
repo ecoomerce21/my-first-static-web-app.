@@ -1,13 +1,11 @@
-// src/pages/ConsumerView.js
 import React, { useEffect, useState } from 'react';
 import './ConsumerView.css';
-const blobUrl = 'https://myfirststaticwebapp1.blob.core.windows.net/videos?restype=container&comp=list';
 
 const ConsumerView = () => {
   const [videoUrls, setVideoUrls] = useState([]);
 
   useEffect(() => {
-    fetch(blobUrl)
+    fetch('https://myfirststaticwebapp1.blob.core.windows.net/videos?restype=container&comp=list')
       .then((response) => response.text())
       .then((xmlText) => {
         const parser = new DOMParser();
@@ -16,12 +14,10 @@ const ConsumerView = () => {
 
         const urls = Array.from(blobs).map((blob) => {
           const name = blob.getElementsByTagName('Name')[0].textContent;
-          return `${blobUrl.split('?')[0]}/${name}?${blobUrl.split('?')[1]}`;
+          return `https://myfirststaticwebapp1.blob.core.windows.net/videos/${name}`;
         });
 
         setVideoUrls(urls);
-        console.log('Fetched video URLs:', urls);
-
       })
       .catch((error) => {
         console.error('Failed to load videos:', error);
