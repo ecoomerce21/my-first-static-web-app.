@@ -1,48 +1,52 @@
 import React, { useEffect, useState } from 'react';
 import './ConsumerView.css';
 
-// ✅ Move this outside the component
 const listUrl = 'https://myfirststaticwebapp1.blob.core.windows.net/videos?restype=container&comp=list';
 
 const ConsumerView = () => {
   const [videoUrls, setVideoUrls] = useState([]);
+  const [videoMetadata, setVideoMetadata] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
   const [comments, setComments] = useState({});
   const [ratings, setRatings] = useState({});
-  const [videoMetadata, setVideoMetadata] = useState({});
 
   useEffect(() => {
     fetch(listUrl)
       .then((response) => response.text())
-      .then((xmlText) => {
+      .then(async (xmlText) => {
         const parser = new DOMParser();
         const xml = parser.parseFromString(xmlText, 'application/xml');
         const blobs = xml.getElementsByTagName('Blob');
 
-        const urls = Array.from(blobs).map((blob) => {
+        const urls = [];
+        const metadataMap = {};
+
+        for (let blob of blobs) {
           const name = blob.getElementsByTagName('Name')[0].textContent;
-          const url = `https://myfirststaticwebapp1.blob.core.windows.net/videos/${name}`;
-          const metadata = extractMetadataFromName(name);
-          setVideoMetadata(prev => ({ ...prev, [url]: metadata }));
-          return url;
-        });
+          if (name.endsWith('.mp4')) {
+            const videoUrl = `https://myfirststaticwebapp1.blob.core.windows.net/videos/${name}`;
+            urls.push(videoUrl);
+
+            const metadataUrl = videoUrl.replace(/\.mp4$/, '.json');
+            try {
+              const res = await fetch(metadataUrl);
+              if (res.ok) {
+                const data = await res.json();
+                metadataMap[videoUrl] = data;
+              }
+            } catch (err) {
+              console.warn(`Metadata fetch failed for ${metadataUrl}`, err);
+            }
+          }
+        }
 
         setVideoUrls(urls);
+        setVideoMetadata(metadataMap);
       })
       .catch((error) => {
         console.error('Failed to load videos:', error);
       });
-  }, []); // ✅ No warning now
-
-  const extractMetadataFromName = (name) => {
-    const parts = name.split('__');
-    return {
-      title: decodeURIComponent(parts[0] || ''),
-      caption: decodeURIComponent(parts[1] || ''),
-      location: decodeURIComponent(parts[2] || ''),
-      people: decodeURIComponent(parts[3] || '').split(','),
-    };
-  };
+  }, []);
 
   const handleCommentChange = (url, comment) => {
     setComments(prev => ({ ...prev, [url]: comment }));
@@ -56,9 +60,17 @@ const ConsumerView = () => {
     setRatings(prev => ({ ...prev, [url]: rating }));
   };
 
-  const filteredVideos = videoUrls.filter(url =>
-    url.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredVideos = videoUrls.filter(url => {
+    const metadata = videoMetadata[url];
+    const search = searchTerm.toLowerCase();
+    return (
+      url.toLowerCase().includes(search) ||
+      metadata?.title?.toLowerCase().includes(search) ||
+      metadata?.caption?.toLowerCase().includes(search) ||
+      metadata?.location?.toLowerCase().includes(search) ||
+      metadata?.people?.toLowerCase().includes(search)
+    );
+  });
 
   return (
     <div className="consumer-container">
@@ -84,10 +96,10 @@ const ConsumerView = () => {
               </video>
 
               <div className="video-info">
-                <strong>{meta.title}</strong>
+                <strong>{meta.title || 'Untitled'}</strong>
                 <p><em>{meta.caption}</em></p>
                 <p>📍 {meta.location}</p>
-                <p>👥 {meta.people?.join(', ')}</p>
+                <p>👥 {meta.people}</p>
               </div>
 
               <div className="rating">

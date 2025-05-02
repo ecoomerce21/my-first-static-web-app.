@@ -20,7 +20,8 @@ const CreatorView = () => {
       return;
     }
 
-    const blobName = `${Date.now()}-${selectedFile.name}`;
+    const blobName = `${encodeURIComponent(videoTitle)}__${encodeURIComponent(caption)}__${encodeURIComponent(location)}__${encodeURIComponent(peoplePresent)}__${Date.now()}-${selectedFile.name}`;
+
     const containerName = "videos";
 
     const sasBaseUrl = "https://myfirststaticwebapp1.blob.core.windows.net";
