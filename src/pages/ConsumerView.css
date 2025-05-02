@@ -1,44 +1,104 @@
 .consumer-container {
+  max-width: 1200px;
+  margin: 40px auto;
   padding: 20px;
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+}
+
+.consumer-container h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 30px;
 }
 
 .search-box {
-  padding: 10px;
-  margin-bottom: 20px;
-  width: 300px;
+  width: 100%;
+  padding: 12px 16px;
+  margin-bottom: 30px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
   font-size: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .video-gallery {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 24px;
+  justify-content: center;
 }
 
 .video-card {
-  border: 1px solid #ccc;
-  padding: 10px;
+  background-color: #fff;
+  border: 1px solid #ddd;
   border-radius: 12px;
-  background: #f9f9f9;
-  max-width: 340px;
+  padding: 16px;
+  width: 360px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease-in-out;
 }
 
-.comment-section {
-  margin-top: 10px;
+.video-card:hover {
+  transform: translateY(-4px);
 }
 
-.comment-section input {
-  width: 220px;
-  padding: 6px;
-  margin-right: 8px;
+.video-card video {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 12px;
 }
 
-.comment-section button {
-  padding: 6px 12px;
-  cursor: pointer;
+.video-info {
+  margin-bottom: 12px;
+}
+
+.video-info h3 {
+  font-size: 18px;
+  color: #2c3e50;
+  margin-bottom: 4px;
+}
+
+.video-info p {
+  font-size: 14px;
+  color: #555;
+  margin: 2px 0;
 }
 
 .rating {
-  margin-top: 10px;
+  margin: 10px 0;
+}
+
+.rating span {
+  transition: color 0.2s;
+}
+
+.comment-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.comment-section input {
+  padding: 8px 12px;
+  font-size: 14px;
+  margin-bottom: 6px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.comment-section button {
+  align-self: flex-end;
+  padding: 8px 14px;
+  background-color: #0078d4;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.comment-section button:hover {
+  background-color: #005fa3;
 }

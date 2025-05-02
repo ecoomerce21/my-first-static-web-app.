@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import './ConsumerView.css';
 
+// ✅ Move this outside the component
+const listUrl = 'https://myfirststaticwebapp1.blob.core.windows.net/videos?restype=container&comp=list';
+
 const ConsumerView = () => {
   const [videoUrls, setVideoUrls] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [comments, setComments] = useState({});
   const [ratings, setRatings] = useState({});
-
-  const blobListUrl = 'https://myfirststaticwebapp1.blob.core.windows.net/videos?restype=container&comp=list';
+  const [videoMetadata, setVideoMetadata] = useState({});
 
   useEffect(() => {
-    fetch(blobListUrl)
+    fetch(listUrl)
       .then((response) => response.text())
       .then((xmlText) => {
         const parser = new DOMParser();
@@ -19,7 +21,10 @@ const ConsumerView = () => {
 
         const urls = Array.from(blobs).map((blob) => {
           const name = blob.getElementsByTagName('Name')[0].textContent;
-          return `https://myfirststaticwebapp1.blob.core.windows.net/videos/${name}`;
+          const url = `https://myfirststaticwebapp1.blob.core.windows.net/videos/${name}`;
+          const metadata = extractMetadataFromName(name);
+          setVideoMetadata(prev => ({ ...prev, [url]: metadata }));
+          return url;
         });
 
         setVideoUrls(urls);
@@ -27,7 +32,17 @@ const ConsumerView = () => {
       .catch((error) => {
         console.error('Failed to load videos:', error);
       });
-  }, []);
+  }, []); // ✅ No warning now
+
+  const extractMetadataFromName = (name) => {
+    const parts = name.split('__');
+    return {
+      title: decodeURIComponent(parts[0] || ''),
+      caption: decodeURIComponent(parts[1] || ''),
+      location: decodeURIComponent(parts[2] || ''),
+      people: decodeURIComponent(parts[3] || '').split(','),
+    };
+  };
 
   const handleCommentChange = (url, comment) => {
     setComments(prev => ({ ...prev, [url]: comment }));
@@ -58,40 +73,51 @@ const ConsumerView = () => {
       />
 
       <div className="video-gallery">
-        {filteredVideos.map((url, index) => (
-          <div key={index} className="video-card">
-            <video controls width="320" height="240">
-              <source src={url} type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
+        {filteredVideos.map((url, index) => {
+          const meta = videoMetadata[url] || {};
 
-            <div className="rating">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <span
-                  key={star}
-                  onClick={() => handleRating(url, star)}
-                  style={{
-                    cursor: 'pointer',
-                    color: ratings[url] >= star ? 'gold' : 'gray',
-                    fontSize: '1.5rem',
-                  }}
-                >
-                  ★
-                </span>
-              ))}
-            </div>
+          return (
+            <div key={index} className="video-card">
+              <video controls width="320" height="240">
+                <source src={url} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
 
-            <div className="comment-section">
-              <input
-                type="text"
-                placeholder="Write a comment..."
-                value={comments[url] || ''}
-                onChange={(e) => handleCommentChange(url, e.target.value)}
-              />
-              <button onClick={() => handleCommentSubmit(url)}>Submit</button>
+              <div className="video-info">
+                <strong>{meta.title}</strong>
+                <p><em>{meta.caption}</em></p>
+                <p>📍 {meta.location}</p>
+                <p>👥 {meta.people?.join(', ')}</p>
+              </div>
+
+              <div className="rating">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <span
+                    key={star}
+                    onClick={() => handleRating(url, star)}
+                    style={{
+                      cursor: 'pointer',
+                      color: ratings[url] >= star ? 'gold' : 'gray',
+                      fontSize: '1.5rem',
+                    }}
+                  >
+                    ★
+                  </span>
+                ))}
+              </div>
+
+              <div className="comment-section">
+                <input
+                  type="text"
+                  placeholder="Write a comment..."
+                  value={comments[url] || ''}
+                  onChange={(e) => handleCommentChange(url, e.target.value)}
+                />
+                <button onClick={() => handleCommentSubmit(url)}>Submit</button>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
