@@ -1,107 +1,126 @@
 import React, { useState } from 'react';
 import './CreatorView.css';
 
+const sasToken = '?sv=2024-11-04&ss=bfqt&srt=co&sp=rwdlacupiytfx&se=2025-06-04T21:41:57Z&st=2025-04-30T13:41:57Z&spr=https&sig=N4ayzcsA6HreQViX8GkcVty4IH%2B98JCe%2BZUWX3Vwrws%3D';
+const uploadBaseUrl = 'https://myfirststaticwebapp1.blob.core.windows.net/videos';
+
 const CreatorView = () => {
-  const [videoTitle, setVideoTitle] = useState('');
+  const [file, setFile] = useState(null);
+  const [title, setTitle] = useState('');
   const [caption, setCaption] = useState('');
   const [location, setLocation] = useState('');
-  const [peoplePresent, setPeoplePresent] = useState('');
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [people, setPeople] = useState('');
+  const [uploadStatus, setUploadStatus] = useState('');
 
-  const handleFileChange = (e) => {
-    setSelectedFile(e.target.files[0]);
-  };
-
-  const handleSubmit = async (e) => {
+  const handleUpload = async (e) => {
     e.preventDefault();
+    if (!file) return;
 
-    if (!selectedFile) {
-      alert("Please select a video file.");
-      return;
-    }
-
-    const blobName = `${encodeURIComponent(videoTitle)}__${encodeURIComponent(caption)}__${encodeURIComponent(location)}__${encodeURIComponent(peoplePresent)}__${Date.now()}-${selectedFile.name}`;
-
-    const containerName = "videos";
-
-    const sasBaseUrl = "https://myfirststaticwebapp1.blob.core.windows.net";
-    const sasToken = "?sv=2024-11-04&ss=bfqt&srt=o&sp=rwdlacupiytfx&se=2025-06-01T08:50:26Z&st=2025-05-01T08:50:26Z&spr=https&sig=Q7XJ7xLhq%2BCZJKaEFGtPPhRbQIal32NQX07w8Okjn2w%3D";
-
-    const videoUploadUrl = `${sasBaseUrl}/${containerName}/${blobName}${sasToken}`;
-    const metadataFileName = blobName.replace(/\.[^/.]+$/, "") + ".json";
-    const metadataUploadUrl = `${sasBaseUrl}/${containerName}/${metadataFileName}${sasToken}`;
+    const fileExtension = file.name.split('.').pop();
+    const timestamp = Date.now();
+    const baseFileName = `${timestamp}`;
+    const blobFileName = `${baseFileName}.${fileExtension}`;
+    const uploadUrl = `${uploadBaseUrl}/${blobFileName}${sasToken}`;
+    const metadataUrl = `${uploadBaseUrl}/${baseFileName}.json${sasToken}`;
 
     try {
-      // 1. Upload video
-      const videoResponse = await fetch(videoUploadUrl, {
-        method: "PUT",
+      // Upload media file
+      await fetch(uploadUrl, {
+        method: 'PUT',
         headers: {
-          "x-ms-blob-type": "BlockBlob",
-          "Content-Type": selectedFile.type,
+          'x-ms-blob-type': 'BlockBlob',
+          'Content-Type': file.type,
         },
-        body: selectedFile,
+        body: file,
       });
 
-      if (!videoResponse.ok) {
-        const err = await videoResponse.text();
-        console.error("Video upload failed:", err);
-        alert("❌ Video upload failed.");
-        return;
-      }
-
-      // 2. Upload metadata JSON
+      // Upload metadata
       const metadata = {
-        title: videoTitle,
-        caption: caption,
-        location: location,
-        people: peoplePresent,
-        videoFile: blobName
+        title,
+        caption,
+        location,
+        people,
+        fileType: file.type.startsWith('image/') ? 'image' : 'video',
       };
 
-      const metadataBlob = new Blob([JSON.stringify(metadata)], { type: 'application/json' });
+      const metadataBlob = new Blob([JSON.stringify(metadata)], {
+        type: 'application/json',
+      });
 
-      const metadataResponse = await fetch(metadataUploadUrl, {
-        method: "PUT",
+      await fetch(metadataUrl, {
+        method: 'PUT',
         headers: {
-          "x-ms-blob-type": "BlockBlob",
-          "Content-Type": "application/json",
+          'x-ms-blob-type': 'BlockBlob',
+          'Content-Type': 'application/json',
         },
         body: metadataBlob,
       });
 
-      if (!metadataResponse.ok) {
-        const err = await metadataResponse.text();
-        console.error("Metadata upload failed:", err);
-        alert("❌ Metadata upload failed.");
-        return;
-      }
-
-      alert("✅ Video and metadata uploaded successfully!");
-
-      // Clear form
-      setVideoTitle('');
+      setUploadStatus('✅ Upload successful!');
+      // Reset form
+      setFile(null);
+      setTitle('');
       setCaption('');
       setLocation('');
-      setPeoplePresent('');
-      setSelectedFile(null);
-
-    } catch (err) {
-      console.error("Upload error:", err);
-      alert("❌ Upload error.");
+      setPeople('');
+    } catch (error) {
+      console.error('Upload failed:', error);
+      setUploadStatus('❌ Upload failed. Please try again.');
     }
   };
 
   return (
     <div className="creator-container">
-      <h1>Creator View</h1>
-      <form onSubmit={handleSubmit} className="creator-form">
-        <input type="text" placeholder="Video Title" value={videoTitle} onChange={(e) => setVideoTitle(e.target.value)} required />
-        <input type="text" placeholder="Caption" value={caption} onChange={(e) => setCaption(e.target.value)} required />
-        <input type="text" placeholder="Location" value={location} onChange={(e) => setLocation(e.target.value)} required />
-        <input type="text" placeholder="People Present" value={peoplePresent} onChange={(e) => setPeoplePresent(e.target.value)} required />
-        <input type="file" accept="video/*" onChange={handleFileChange} required />
-        <button type="submit">Upload Video</button>
+      <h1>Creator View - Upload Video or Image</h1>
+      <form onSubmit={handleUpload} className="creator-form">
+        <input
+          type="file"
+          accept="video/mp4,image/png,image/jpeg,image/jpg"
+          onChange={(e) => setFile(e.target.files[0])}
+          required
+        />
+
+        {file && (
+          <div className="media-preview">
+            {file.type.startsWith('image/') ? (
+              <img src={URL.createObjectURL(file)} alt="Preview" width="300" />
+            ) : (
+              <video width="300" controls>
+                <source src={URL.createObjectURL(file)} type={file.type} />
+              </video>
+            )}
+          </div>
+        )}
+
+        <input
+          type="text"
+          placeholder="Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Caption"
+          value={caption}
+          onChange={(e) => setCaption(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Location"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="People Present"
+          value={people}
+          onChange={(e) => setPeople(e.target.value)}
+        />
+        <button type="submit">Upload</button>
       </form>
+
+      {uploadStatus && <p className="upload-status">{uploadStatus}</p>}
     </div>
   );
 };

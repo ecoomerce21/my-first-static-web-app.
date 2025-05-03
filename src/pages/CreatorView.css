@@ -1,33 +1,39 @@
 .creator-container {
-  max-width: 600px;
+  max-width: 800px;
   margin: 40px auto;
   padding: 30px;
-  background-color: #fefefe;
   border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .creator-container h1 {
   text-align: center;
-  margin-bottom: 25px;
-  color: #333;
-  font-size: 26px;
+  margin-bottom: 30px;
+  color: #eeecec;
+  font-size: 28px;
 }
 
 .creator-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
+  width: 100%;
+  max-width: 100%;
 }
 
 .creator-form input[type="text"],
-.creator-form input[type="file"] {
+.creator-form input[type="file"],
+.creator-form button {
+  width: 100%;
+  box-sizing: border-box;
   padding: 12px 14px;
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 15px;
   transition: border-color 0.2s ease;
+  background-color: #fafafa;
 }
 
 .creator-form input[type="text"]:focus,
@@ -37,7 +43,6 @@
 }
 
 .creator-form button {
-  padding: 12px;
   background-color: #0078d4;
   color: white;
   font-size: 16px;
@@ -49,4 +54,25 @@
 
 .creator-form button:hover {
   background-color: #005fa3;
+}
+
+.media-preview {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.media-preview img,
+.media-preview video {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.upload-status {
+  margin-top: 20px;
+  font-weight: 600;
+  text-align: center;
+  color: #555;
 }

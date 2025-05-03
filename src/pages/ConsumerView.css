@@ -9,12 +9,12 @@
 
 .consumer-container h1 {
   text-align: center;
-  color: #333;
+  color: #070606;
   margin-bottom: 30px;
 }
 
 .search-box {
-  width: 100%;
+  width: 90%;
   padding: 12px 16px;
   margin-bottom: 30px;
   border: 1px solid #ccc;

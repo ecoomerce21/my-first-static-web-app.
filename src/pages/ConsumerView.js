@@ -4,38 +4,37 @@ import './ConsumerView.css';
 const videoBaseUrl = 'https://myfirststaticwebapp1.blob.core.windows.net/videos';
 const feedbackBaseUrl = 'https://myfirststaticwebapp1.blob.core.windows.net/feedback';
 
-// Include your SAS token here (from Azure Portal)
-const sasToken = '?sp=rcw&st=2025-04-30T12:27:27Z&se=2025-07-04T20:27:27Z&spr=https&sv=2024-11-04&sr=c&sig=hL58oPqdfHIYApoPSOaisf35vk5VCAJRnqFSqlPMouA%3D';
-
+// Include your SAS token here
+const sasToken = '?sv=2024-11-04&ss=bfqt&srt=co&sp=rwdlacupiytfx&se=2025-06-04T21:41:57Z&st=2025-04-30T13:41:57Z&spr=https&sig=N4ayzcsA6HreQViX8GkcVty4IH%2B98JCe%2BZUWX3Vwrws%3D';
 const listUrl = `${videoBaseUrl}?restype=container&comp=list`;
 
 const ConsumerView = () => {
-  const [videoUrls, setVideoUrls] = useState([]);
-  const [videoMetadata, setVideoMetadata] = useState({});
+  const [mediaUrls, setMediaUrls] = useState([]);
+  const [mediaMetadata, setMediaMetadata] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
   const [commentInput, setCommentInput] = useState({});
   const [ratingsInput, setRatingsInput] = useState({});
   const [comments, setComments] = useState({});
   const [ratings, setRatings] = useState({});
 
-  const extractVideoIdFromUrl = (url) => {
-    return url.split('/').pop().replace('.mp4', '');
+  const extractMediaIdFromUrl = (url) => {
+    return url.split('/').pop().replace(/\.(mp4|jpg|jpeg|png)$/i, '');
   };
 
-  const fetchFeedbackData = useCallback(async (videoUrl) => {
-    const videoId = extractVideoIdFromUrl(videoUrl);
-    const feedbackFileName = `${videoId}.feedback.json`;
+  const fetchFeedbackData = useCallback(async (mediaUrl) => {
+    const mediaId = extractMediaIdFromUrl(mediaUrl);
+    const feedbackFileName = `${mediaId}.feedback.json`;
     const feedbackUrl = `${feedbackBaseUrl}/${feedbackFileName}${sasToken}`;
 
     try {
       const response = await fetch(feedbackUrl);
       if (response.ok) {
         const feedbackData = await response.json();
-        setComments((prev) => ({ ...prev, [videoUrl]: feedbackData.comments || [] }));
-        setRatings((prev) => ({ ...prev, [videoUrl]: feedbackData.ratings || [] }));
+        setComments((prev) => ({ ...prev, [mediaUrl]: feedbackData.comments || [] }));
+        setRatings((prev) => ({ ...prev, [mediaUrl]: feedbackData.ratings || [] }));
       } else {
-        setComments((prev) => ({ ...prev, [videoUrl]: [] }));
-        setRatings((prev) => ({ ...prev, [videoUrl]: [] }));
+        setComments((prev) => ({ ...prev, [mediaUrl]: [] }));
+        setRatings((prev) => ({ ...prev, [mediaUrl]: [] }));
       }
     } catch (error) {
       console.error('Error fetching feedback:', error);
@@ -55,16 +54,16 @@ const ConsumerView = () => {
 
         for (let blob of blobs) {
           const name = blob.getElementsByTagName('Name')[0].textContent;
-          if (name.endsWith('.mp4')) {
-            const videoUrl = `${videoBaseUrl}/${name}`;
-            urls.push(videoUrl);
+          if (/\.(mp4|jpg|jpeg|png)$/i.test(name)) {
+            const mediaUrl = `${videoBaseUrl}/${name}`;
+            urls.push(mediaUrl);
 
-            const metadataUrl = videoUrl.replace('.mp4', '.json');
+            const metadataUrl = mediaUrl.replace(/\.(mp4|jpg|jpeg|png)$/i, '.json');
             try {
               const res = await fetch(metadataUrl);
               if (res.ok) {
                 const data = await res.json();
-                metadataMap[videoUrl] = data;
+                metadataMap[mediaUrl] = data;
               }
             } catch (err) {
               console.warn(`Metadata fetch failed for ${metadataUrl}`, err);
@@ -72,19 +71,19 @@ const ConsumerView = () => {
           }
         }
 
-        setVideoUrls(urls);
-        setVideoMetadata(metadataMap);
+        setMediaUrls(urls);
+        setMediaMetadata(metadataMap);
       })
       .catch((error) => {
-        console.error('Failed to load videos:', error);
+        console.error('Failed to load media:', error);
       });
   }, []);
 
   useEffect(() => {
-    videoUrls.forEach((url) => {
+    mediaUrls.forEach((url) => {
       fetchFeedbackData(url);
     });
-  }, [videoUrls, fetchFeedbackData]);
+  }, [mediaUrls, fetchFeedbackData]);
 
   const handleRatingClick = (url, rating) => {
     setRatingsInput((prev) => ({ ...prev, [url]: rating }));
@@ -95,8 +94,8 @@ const ConsumerView = () => {
   };
 
   const handleCommentSubmit = async (url) => {
-    const videoId = extractVideoIdFromUrl(url);
-    const feedbackFileName = `${videoId}.feedback.json`;
+    const mediaId = extractMediaIdFromUrl(url);
+    const feedbackFileName = `${mediaId}.feedback.json`;
     const feedbackUrl = `${feedbackBaseUrl}/${feedbackFileName}${sasToken}`;
 
     const newComment = {
@@ -142,8 +141,8 @@ const ConsumerView = () => {
     }
   };
 
-  const filteredVideos = videoUrls.filter((url) => {
-    const meta = videoMetadata[url];
+  const filteredMedia = mediaUrls.filter((url) => {
+    const meta = mediaMetadata[url];
     const term = searchTerm.toLowerCase();
     return (
       url.toLowerCase().includes(term) ||
@@ -156,28 +155,32 @@ const ConsumerView = () => {
 
   return (
     <div className="consumer-container">
-      <h1>Consumer View - Watch Videos</h1>
+      <h1>Consumer View - Watch Media</h1>
 
       <input
         type="text"
-        placeholder="Search videos..."
+        placeholder="Search videos or images..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         className="search-box"
       />
 
       <div className="video-gallery">
-        {filteredVideos.map((url, index) => {
-          const meta = videoMetadata[url] || {};
-          const videoComments = comments[url] || [];
-          const videoRatings = ratings[url] || [];
+        {filteredMedia.map((url, index) => {
+          const meta = mediaMetadata[url] || {};
+          const mediaComments = comments[url] || [];
+          const mediaRatings = ratings[url] || [];
 
           return (
             <div key={index} className="video-card">
-              <video controls width="320" height="240">
-                <source src={url} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
+              {url.endsWith('.mp4') ? (
+                <video controls width="320" height="240">
+                  <source src={url} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              ) : (
+                <img src={url} alt="Uploaded content" width="320" height="240" />
+              )}
 
               <div className="video-info">
                 <strong>{meta.title || 'Untitled'}</strong>
@@ -186,14 +189,12 @@ const ConsumerView = () => {
                 <p>👥 {meta.people}</p>
               </div>
 
-              {/* Display average rating */}
               <p>
-                ⭐ Avg Rating: {videoRatings.length > 0
-                  ? (videoRatings.reduce((sum, r) => sum + r.rating, 0) / videoRatings.length).toFixed(1)
+                ⭐ Avg Rating: {mediaRatings.length > 0
+                  ? (mediaRatings.reduce((sum, r) => sum + r.rating, 0) / mediaRatings.length).toFixed(1)
                   : 'No ratings yet'}
               </p>
 
-              {/* Rating Section */}
               <div className="rating">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <span
@@ -210,7 +211,6 @@ const ConsumerView = () => {
                 ))}
               </div>
 
-              {/* Comment Input */}
               <div className="comment-section">
                 <input
                   type="text"
@@ -221,11 +221,10 @@ const ConsumerView = () => {
                 <button onClick={() => handleCommentSubmit(url)}>Submit</button>
               </div>
 
-              {/* Display Comments */}
               <div className="comments-display">
                 <h4>Comments:</h4>
-                {videoComments.length > 0 ? (
-                  videoComments.map((c, i) => (
+                {mediaComments.length > 0 ? (
+                  mediaComments.map((c, i) => (
                     <p key={i}><strong>{c.username}:</strong> {c.comment}</p>
                   ))
                 ) : (
